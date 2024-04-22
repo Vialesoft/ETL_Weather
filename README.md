@@ -1,7 +1,9 @@
 # ETL_Weather
+
  Coder House Data Engineering Course 2024 (Final Project)
 
-**config.ini file**
+## config.ini file
+
 Structure of config.ini file:
 Names of sections are important, keep them as they are here
 
