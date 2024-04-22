@@ -8,6 +8,7 @@ Names of sections are important, keep them as they are here
 [APIConnection]
 
 apiKey = your_weatherapi_key
+
 apiUrl = URL of API. E.g.: http://api.weatherapi.com/v1/
 apiMethod = Method you want to use. E.g.: history.json
 apiCity = City. E.g.: London
