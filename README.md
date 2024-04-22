@@ -4,8 +4,11 @@
 
 ## config.ini file
 
-Structure of config.ini file:
+**Structure of config.ini file:**
+
 Names of sections are important, keep them as they are here
+
+### Sections
 
 __[APIConnection]__
 
@@ -17,7 +20,10 @@ apiMethod = Method you want to use. E.g.: history.json
 
 apiCity = City. E.g.: London
 
+---
+
 __[Database]__
+
 host = Amazon Redshift link (or another provider)
 
 dbName = Name of database where you want to bulk DataFrame data
