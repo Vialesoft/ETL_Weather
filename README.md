@@ -12,24 +12,24 @@ Names of sections are important, keep them as they are here
 
 __[APIConnection]__
 
-apiKey = your_weatherapi_key
+**apiKey** = your_weatherapi_key
 
-apiUrl = URL of API. E.g.: http://api.weatherapi.com/v1/
+**apiUrl** = URL of API. E.g.: http://api.weatherapi.com/v1/
 
-apiMethod = Method you want to use. E.g.: history.json
+**apiMethod** = Method you want to use. E.g.: history.json
 
-apiCity = City. E.g.: London
+**apiCity** = City. E.g.: London
 
 ---
 
 __[Database]__
 
-host = Amazon Redshift link (or another provider)
+**host** = Amazon Redshift link (or another provider)
 
-dbName = Name of database where you want to bulk DataFrame data
+**dbName** = Name of database where you want to bulk DataFrame data
 
-port = Amazon Redshift (or another provider) port connection
+**port** = Amazon Redshift (or another provider) port connection
 
-user = User to connect to DB
+**user** = User to connect to DB
 
-password = Password to connect to DB
+**password** = Password to connect to DB
