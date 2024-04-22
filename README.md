@@ -33,3 +33,9 @@ __[Database]__
 **user** = User to connect to DB
 
 **password** = Password to connect to DB
+
+---
+
+### WeatherAPI Documentation
+
+https://www.weatherapi.com/docs/
