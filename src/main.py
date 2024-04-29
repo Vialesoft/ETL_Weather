@@ -4,8 +4,9 @@ import requests
 import pandas
 import io
 import json
+import sqlalchemy as sa
 
-config = helpers.readConfig("config.ini")
+config = helpers.getAPIConnectionConfig("config.ini")
 
 # Levantar datos de la API
 # https://www.weatherapi.com/my/
@@ -33,9 +34,28 @@ forecasts = po["forecast"]
 # a = pandas.read_json("lala.json")
 # print(a)
 
-f = open("files/location.json", "x")
-f2 = open("files/forecasts.json", "x")
-f.write(json.dumps(location))
-f2.write(json.dumps(forecasts))
+# f = open("files/location.json", "x")
+# f2 = open("files/forecasts.json", "x")
+# f.write(json.dumps(location))
+# f2.write(json.dumps(forecasts))
 
 # Meter datos en Redshift
+
+dataTest = {'Id': [1,2,3,4,5], 'Nombre': ["1","2","3","4","5"]}
+dataFrameTest = pandas.DataFrame(data=dataTest)
+
+conn_str = helpers.build_conn_string('config.ini')
+conn, engine = helpers.connect_to_db(conn_str)
+
+print(dataFrameTest)
+# print(pandas.__version__) # 2.2.2
+
+dataFrameTest.to_sql(
+    name = 'Hola',
+    con = engine,
+    schema = "angelmamberto15_coderhouse",
+    if_exists = 'replace',
+    method = 'multi',
+    chunksize = 1000,
+    index = False
+)
