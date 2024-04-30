@@ -47,12 +47,13 @@ dataFrameTest = pandas.DataFrame(data=dataTest)
 conn_str = helpers.build_conn_string('config.ini')
 conn, engine = helpers.connect_to_db(conn_str)
 
-print(dataFrameTest)
-# print(pandas.__version__) # 2.2.2
+# print(dataFrameTest)
+# print(pandas.__version__) # 2.1.4
+# print(sa.__version__) # 1.4.52
 
 dataFrameTest.to_sql(
-    name = 'Hola',
-    con = engine,
+    name = 'hola',
+    con = conn,
     schema = "angelmamberto15_coderhouse",
     if_exists = 'replace',
     method = 'multi',
