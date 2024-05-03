@@ -1,6 +1,8 @@
 # ETL_Weather
 
  Coder House Data Engineering Course 2024 (Final Project)
+ 
+- To run the code, use the command **python main.py** on directory **src**
 
 ## config.ini file
 

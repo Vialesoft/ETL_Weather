@@ -3,7 +3,7 @@ class ApiConnectionConfig:
         apiKey = ""
         apiUrl = ""
         apiMethod = ""
-        apiCity = ""
+        apiCities = []
 
 class DatabaseConfig:
     def __init__(self):

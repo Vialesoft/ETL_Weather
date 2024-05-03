@@ -1,58 +1,102 @@
 # Config and imports
 import helpers
 import requests
-import pandas
-import io
+import pandas as pd
 import json
 import sqlalchemy as sa
+from datetime import datetime
 
 config = helpers.getAPIConnectionConfig("config.ini")
 
-# Levantar datos de la API
 # https://www.weatherapi.com/my/
-# https://api.weatherapi.com/v1/history.json?key=f80ece51f831494b981182127241904&q=London&dt=2024-04-16&end_dt=2024-04-18
+# https://saturncloud.io/blog/how-to-convert-nested-json-to-pandas-dataframe-with-specific-format/
+# https://api.weatherapi.com/v1/history.json?key=APIKEY&q=London&dt=2024-04-16&end_dt=2024-04-18
+# print(pandas.__version__) # 2.1.4
+# print(sa.__version__) # 1.4.52
 
+# Get API data
 url = helpers.createBasicAPIUrl(config)
 
-response = requests.get(url).content
-# print(response)
+# Get data from Weather API
+response = requests.get(url)
+# Transform data into a dict
+data = json.loads(response.content.decode('utf-8'))
+current_date = datetime.now()
 
-# print(response.json())
-# a = pandas.read_csv(io.StringIO(response.decode('utf-8')))
+location_dataFrame = pd.json_normalize(data["location"])
+forecastDay_dataFrame = pd.json_normalize(data["forecast"]["forecastday"])
+hourForecast_dataFrame = pd.json_normalize(
+    data["forecast"]["forecastday"],
+    ["hour"],
+    ["date"]
+)
 
-# print(response.json())
+# Cleaning, adding and renaming columns
+location_dataFrame = location_dataFrame.drop("localtime_epoch", axis=1)
+location_dataFrame.columns = ['name', 'region', 'country', 'latitude', 'longitude', 'tz_id', 'localdate']
+location_dataFrame["load_date"] = current_date
+location_dataFrame["update_date"] = current_date
+location_id = location_dataFrame["tz_id"][0]
 
-po = json.loads(response.decode('utf-8'))
-location = po["location"]
-forecasts = po["forecast"]
+forecastDay_dataFrame = forecastDay_dataFrame.drop(["hour", "date_epoch"], axis=1)
+forecastDay_dataFrame.columns = ['date', 'maxtemp_c', 'maxtemp_f',
+       'mintemp_c', 'mintemp_f', 'avgtemp_c', 'avgtemp_f',
+       'maxwind_mph', 'maxwind_kph', 'totalprecip_mm',
+       'totalprecip_in', 'totalsnow_cm', 'avgvis_km',
+       'avgvis_miles', 'avghumidity', 'daily_will_it_rain',
+       'daily_chance_of_rain', 'daily_will_it_snow',
+       'daily_chance_of_snow', 'condition_text', 'condition_icon',
+       'condition_code', 'uv', 'sunrise', 'sunset',
+       'moonrise', 'moonset', 'moon_phase',
+       'moon_illumination']
+forecastDay_dataFrame["load_date"] = current_date
+forecastDay_dataFrame["update_date"] = current_date
+forecastDay_dataFrame["location_id"] = location_id
 
-# print(location)
-# print(forecasts)
+hourForecast_dataFrame = hourForecast_dataFrame.drop("time_epoch", axis=1)
+hourForecast_dataFrame.columns = ['time', 'temp_c', 'temp_f', 'is_day', 'wind_mph',
+       'wind_kph', 'wind_degree', 'wind_dir', 'pressure_mb', 'pressure_in',
+       'precip_mm', 'precip_in', 'snow_cm', 'humidity', 'cloud', 'feelslike_c',
+       'feelslike_f', 'windchill_c', 'windchill_f', 'heatindex_c',
+       'heatindex_f', 'dewpoint_c', 'dewpoint_f', 'will_it_rain',
+       'chance_of_rain', 'will_it_snow', 'chance_of_snow', 'vis_km',
+       'vis_miles', 'gust_mph', 'gust_kph', 'uv', 'condition_text',
+       'condition_icon', 'condition_code', 'date']
+hourForecast_dataFrame["load_date"] = current_date
+hourForecast_dataFrame["update_date"] = current_date
+hourForecast_dataFrame["location_id"] = location_id
 
-# f = open("lala.json", "x")
+## Save data into a file
+# f = open("data.json", "x")
 # f.write(response.decode('utf-8'))
-# a = pandas.read_json("lala.json")
-# print(a)
 
-# f = open("files/location.json", "x")
-# f2 = open("files/forecasts.json", "x")
-# f.write(json.dumps(location))
-# f2.write(json.dumps(forecasts))
-
-# Meter datos en Redshift
-
-dataTest = {'Id': [1,2,3,4,5], 'Nombre': ["1","2","3","4","5"]}
-dataFrameTest = pandas.DataFrame(data=dataTest)
+# Save data into Redshift
 
 conn_str = helpers.build_conn_string('config.ini')
 conn, engine = helpers.connect_to_db(conn_str)
 
-# print(dataFrameTest)
-# print(pandas.__version__) # 2.1.4
-# print(sa.__version__) # 1.4.52
+location_dataFrame.to_sql(
+    name = 'locations',
+    con = conn,
+    schema = "angelmamberto15_coderhouse",
+    if_exists = 'replace',
+    method = 'multi',
+    chunksize = 1000,
+    index = False
+)
 
-dataFrameTest.to_sql(
-    name = 'hola',
+forecastDay_dataFrame.to_sql(
+    name = 'forecastsday',
+    con = conn,
+    schema = "angelmamberto15_coderhouse",
+    if_exists = 'replace',
+    method = 'multi',
+    chunksize = 1000,
+    index = False
+)
+
+hourForecast_dataFrame.to_sql(
+    name = 'hourforecasts',
     con = conn,
     schema = "angelmamberto15_coderhouse",
     if_exists = 'replace',

@@ -13,7 +13,7 @@ def getAPIConnectionConfig(fileName):
     configRet.apiKey = config["apiKey"]
     configRet.apiUrl = config["apiUrl"]
     configRet.apiMethod = config["apiMethod"]
-    configRet.apiCity = config["apiCity"]
+    configRet.apiCities = config["apiCities"]
 
     return configRet
 
