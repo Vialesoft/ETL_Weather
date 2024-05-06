@@ -20,7 +20,9 @@ __[APIConnection]__
 
 **apiMethod** = Method you want to use. E.g.: history.json
 
-**apiCity** = City. E.g.: London
+**daysHistory** = How many days in the past program will query
+
+**apiCities** = Cities comma separated. E.g.: London, Montevideo
 
 ---
 
@@ -33,6 +35,8 @@ __[Database]__
 **port** = Amazon Redshift (or another provider) port connection
 
 **user** = User to connect to DB
+
+**schema** = Schema into Redshift DB
 
 **password** = Password to connect to DB
 
