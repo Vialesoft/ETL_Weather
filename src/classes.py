@@ -4,6 +4,7 @@ class ApiConnectionConfig:
         apiUrl = ""
         apiMethod = ""
         apiCities = []
+        daysHistory = 0
 
 class DatabaseConfig:
     def __init__(self):
