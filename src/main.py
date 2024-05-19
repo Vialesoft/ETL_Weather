@@ -79,31 +79,48 @@ for url in urls:
 
     conn, engine = helpers.connectToDB()
 
-    location_dataFrame.to_sql(
-        name = 'locations',
-        con = conn,
-        schema = "angelmamberto15_coderhouse",
-        if_exists = 'replace' if counter == 1 else 'append',
-        method = 'multi',
-        chunksize = 1000,
-        index = False
-    )
+    # location_dataFrame.to_sql(
+    #     name = 'locations',
+    #     con = conn,
+    #     schema = "angelmamberto15_coderhouse",
+    #     if_exists = 'replace' if counter == 1 else 'append',
+    #     method = 'multi',
+    #     chunksize = 1000,
+    #     index = False
+    # )
 
-    forecastDay_dataFrame.to_sql(
-        name = 'forecastsday',
-        con = conn,
-        schema = "angelmamberto15_coderhouse",
-        if_exists = 'replace' if counter == 1 else 'append',
-        method = 'multi',
-        chunksize = 1000,
-        index = False
-    )
+    # forecastDay_dataFrame.to_sql(
+    #     name = 'forecastsday',
+    #     con = conn,
+    #     schema = "angelmamberto15_coderhouse",
+    #     if_exists = 'replace' if counter == 1 else 'append',
+    #     method = 'multi',
+    #     chunksize = 1000,
+    #     index = False
+    # )
 
-    hourForecast_dataFrame.to_sql(
-        name = 'hourforecasts',
+    # hourForecast_dataFrame.to_sql(
+    #     name = 'hourforecasts',
+    #     con = conn,
+    #     schema = "angelmamberto15_coderhouse",
+    #     if_exists = 'replace' if counter == 1 else 'append',
+    #     method = 'multi',
+    #     chunksize = 1000,
+    #     index = False
+    # )
+
+
+    df_Nuevo = location_dataFrame.merge(forecastDay_dataFrame, left_on='location_id', right_on='location_id', how='left')
+    df_Nuevo2 = df_Nuevo.merge(hourForecast_dataFrame, left_on='location_id', right_on='location_id', how='left')
+
+    print(df_Nuevo2)
+
+
+    df_Nuevo2.to_sql(
+        name = 'dfNuevo',
         con = conn,
         schema = "angelmamberto15_coderhouse",
-        if_exists = 'replace' if counter == 1 else 'append',
+        if_exists = 'replace',
         method = 'multi',
         chunksize = 1000,
         index = False
