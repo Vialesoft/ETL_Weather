@@ -70,57 +70,20 @@ for url in urls:
     hourForecast_dataFrame["load_date"] = current_date
     hourForecast_dataFrame["update_date"] = current_date
     hourForecast_dataFrame["location_id"] = location_id
+    
+    # Merging dataframes 
 
-    ## Save data into a file
-    # f = open("data.json", "x")
-    # f.write(response.decode('utf-8'))
-
-    # Save data into Redshift
-
-    conn, engine = helpers.connectToDB()
-
-    # location_dataFrame.to_sql(
-    #     name = 'locations',
-    #     con = conn,
-    #     schema = "angelmamberto15_coderhouse",
-    #     if_exists = 'replace' if counter == 1 else 'append',
-    #     method = 'multi',
-    #     chunksize = 1000,
-    #     index = False
-    # )
-
-    # forecastDay_dataFrame.to_sql(
-    #     name = 'forecastsday',
-    #     con = conn,
-    #     schema = "angelmamberto15_coderhouse",
-    #     if_exists = 'replace' if counter == 1 else 'append',
-    #     method = 'multi',
-    #     chunksize = 1000,
-    #     index = False
-    # )
-
-    # hourForecast_dataFrame.to_sql(
-    #     name = 'hourforecasts',
-    #     con = conn,
-    #     schema = "angelmamberto15_coderhouse",
-    #     if_exists = 'replace' if counter == 1 else 'append',
-    #     method = 'multi',
-    #     chunksize = 1000,
-    #     index = False
-    # )
-
-
-    df_Nuevo = location_dataFrame.merge(forecastDay_dataFrame, left_on='location_id', right_on='location_id', how='left')
+    df_Nuevo = location_dataFrame.merge(forecastDay_dataFrame, left_on='tz_id', right_on='location_id', how='left')
     df_Nuevo2 = df_Nuevo.merge(hourForecast_dataFrame, left_on='location_id', right_on='location_id', how='left')
 
-    print(df_Nuevo2)
-
+    # Save data into Redshift
+    conn, engine = helpers.connectToDB()
 
     df_Nuevo2.to_sql(
-        name = 'dfNuevo',
+        name = 'Forecast',
         con = conn,
         schema = "angelmamberto15_coderhouse",
-        if_exists = 'replace',
+        if_exists = 'replace' if counter == 1 else 'append',
         method = 'multi',
         chunksize = 1000,
         index = False
