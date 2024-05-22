@@ -2,6 +2,7 @@ import configparser
 from classes import ApiConnectionConfig, DatabaseConfig
 from datetime import datetime, timedelta
 import sqlalchemy as sa
+import psycopg2
 
 class Helpers:
   def __init__(self, configPath):
@@ -66,3 +67,9 @@ class Helpers:
     conn = engine.connect()
 
     return conn, engine
+
+  def connectToDBPsycopg(self):
+    # Crea una conexión a la base de datos
+    conn = psycopg2.connect(self.__build_conn_string())
+
+    return conn

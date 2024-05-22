@@ -5,6 +5,7 @@ import pandas as pd
 import json
 import sqlalchemy as sa
 from datetime import datetime
+import psycopg2
 
 helpers = Helpers("config.ini")
 
@@ -18,6 +19,13 @@ helpers = Helpers("config.ini")
 urls = helpers.createBasicAPIUrls()
 current_date = datetime.now()
 counter = 0
+
+connectionPsycopg = helpers.connectToDBPsycopg()
+
+with connectionPsycopg:
+    with connectionPsycopg.cursor() as cur:
+        cur.execute(f"TRUNCATE TABLE forecast;")
+connectionPsycopg.close()
 
 for url in urls:
     counter += 1
@@ -80,10 +88,10 @@ for url in urls:
     conn, engine = helpers.connectToDB()
 
     df_Nuevo2.to_sql(
-        name = 'Forecast',
+        name = 'forecast',
         con = conn,
         schema = "angelmamberto15_coderhouse",
-        if_exists = 'replace' if counter == 1 else 'append',
+        if_exists = 'append',
         method = 'multi',
         chunksize = 1000,
         index = False

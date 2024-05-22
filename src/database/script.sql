@@ -1,3 +1,4 @@
+/*
 CREATE TABLE Locations(
     load_date   TIMESTAMP default now(),
     update_date TIMESTAMP default now(),
@@ -83,6 +84,7 @@ CREATE TABLE HourForecast(
     gust_kph        NUMERIC(6,2),
     uv              NUMERIC(5,2)
 )
+*/
 
 /* - Segunda Entrega - */
 
@@ -92,7 +94,7 @@ CREATE TABLE forecast (
         country TEXT,
         latitude FLOAT(53),
         longitude FLOAT(53),
-        tz_id TEXT,
+        tz_id TEXT NOT NULL,
         localdate TEXT,
         load_date_x TIMESTAMP WITHOUT TIME ZONE,
         update_date_x TIMESTAMP WITHOUT TIME ZONE,
@@ -128,7 +130,7 @@ CREATE TABLE forecast (
         load_date_y TIMESTAMP WITHOUT TIME ZONE,
         update_date_y TIMESTAMP WITHOUT TIME ZONE,
         location_id TEXT,
-        time TEXT,
+        time TEXT NOT NULL,
         temp_c FLOAT(53),
         temp_f FLOAT(53),
         is_day BIGINT,
@@ -165,5 +167,6 @@ CREATE TABLE forecast (
         condition_code_y BIGINT,
         date_y TEXT,
         load_date TIMESTAMP WITHOUT TIME ZONE,
-        update_date TIMESTAMP WITHOUT TIME ZONE
+        update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (tz_id, time)
 )
