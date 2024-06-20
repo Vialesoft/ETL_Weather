@@ -42,6 +42,18 @@ __[Database]__
 
 ---
 
+__[MailServer]__
+
+**url** = smtp.gmail.com
+
+**email** = Email address from where we're sending emails
+
+**emailPassword** = Email Password
+
+**emailDest** = Email address to we're sending emails
+
+---
+
 ### WeatherAPI Documentation
 
 https://www.weatherapi.com/docs/

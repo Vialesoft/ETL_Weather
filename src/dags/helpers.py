@@ -1,5 +1,5 @@
 import configparser
-from classes import ApiConnectionConfig, DatabaseConfig
+from classes import ApiConnectionConfig, DatabaseConfig, EmailConnection
 from datetime import datetime, timedelta
 import sqlalchemy as sa
 import psycopg2
@@ -73,3 +73,15 @@ class Helpers:
     conn = psycopg2.connect(self.__build_conn_string())
 
     return conn
+
+  def get_Email_Config(self):
+      self.parser.read(self.configPath)
+      config = self.parser["MailServer"]
+
+      configRet = EmailConnection()
+      configRet.url = config["url"]
+      configRet.email = config["email"]
+      configRet.emailPassword = config["emailPassword"]
+      configRet.emailDest = config["emailDest"]
+
+      return configRet

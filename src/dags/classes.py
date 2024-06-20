@@ -14,3 +14,10 @@ class DatabaseConfig:
         schema = ""
         user = ""
         password = ""
+
+class EmailConnection:
+    def __init__(self):
+        url = ""
+        email = ""
+        emailPassword = ""
+        emailDest = ""

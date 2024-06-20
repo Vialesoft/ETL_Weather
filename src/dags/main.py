@@ -6,11 +6,13 @@ import json
 import sqlalchemy as sa
 from datetime import datetime
 import psycopg2
+import smtplib
 
 class WeatherETL:
-    def runETL():
-        # helpers = Helpers("config.ini")
+    def runETL(self):
         helpers = Helpers("dags/config.ini")
+        maxTemp = 20
+        pd.set_option('display.max_rows', 1000)
 
         # https://www.weatherapi.com/my/
         # https://saturncloud.io/blog/how-to-convert-nested-json-to-pandas-dataframe-with-specific-format/
@@ -82,11 +84,18 @@ class WeatherETL:
             hourForecast_dataFrame["update_date"] = current_date
             hourForecast_dataFrame["location_id"] = location_id
             
-            # Merging dataframes 
+            # Merging dataframes
 
             df_Nuevo = location_dataFrame.merge(forecastDay_dataFrame, left_on='tz_id', right_on='location_id', how='left')
             df_Nuevo2 = df_Nuevo.merge(hourForecast_dataFrame, left_on='location_id', right_on='location_id', how='left')
 
+            tempAlert = df_Nuevo2.loc[df_Nuevo2['temp_c'].idxmax()]
+
+            if (tempAlert['temp_c'] > maxTemp):
+                print("Sending Email alert")
+                msg = "In " + tempAlert["name"] + ", on " + tempAlert["time"] + " there was a MAX TEMPERATURE episode of " + str(tempAlert["temp_c"]) + " degrees"
+                self.sendEmail(helpers, "Temperature Alert", msg)
+            
             # Save data into Redshift
             conn, engine = helpers.connectToDB()
 
@@ -99,3 +108,28 @@ class WeatherETL:
                 chunksize = 1000,
                 index = False
             )
+
+    def sendEmail(self, helpers, subject, bodyText):
+        try:
+            print("Enviando mail")
+
+            emailConf = helpers.get_Email_Config()
+            x = smtplib.SMTP(emailConf.url, 587)
+            x.starttls()
+
+            print(emailConf.email)
+            print(emailConf.emailPassword)
+
+            x.login(emailConf.email, emailConf.emailPassword)
+            subject = subject
+            body_text = bodyText
+            message = 'Subject: {}\n\n{}'.format(subject, body_text)
+            x.sendmail(emailConf.email, emailConf.emailDest, message)
+
+            print('Tuki')
+        except Exception as exception:
+            print(exception)
+            print('Failure')
+
+a = WeatherETL()
+a.runETL()
